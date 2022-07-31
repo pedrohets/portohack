@@ -41,7 +41,7 @@ namespace AtracacaoApi.Controllers
         /// <param name="numero">numero</param>
         /// <returns>ETA</returns>
         [HttpGet("{numero}/ETA")]
-        public IActionResult ObterETB(string numero)
+        public IActionResult ObterETA(string numero)
         {
             return Ok(ViagemModel.ObterViagens().Where(c => c.Numero == numero).Select(c => new { c.ETA, c.Operador, c.Berco }));
         }
@@ -73,10 +73,10 @@ namespace AtracacaoApi.Controllers
         /// </summary>
         /// <param name="numero">numero</param>
         /// <returns>Abertura Gate</returns>
-        [HttpGet("{numero}/AberturaGate")]
+        [HttpGet("{numero}/PrevisaoAberturaGate")]
         public IActionResult ObterAbertura(string numero)
         {
-            return Ok(ViagemModel.ObterViagens().Where(c => c.Numero == numero).Select(c => new { c.AberturaGate, c.Operador, c.Berco }));
+            return Ok(ViagemModel.ObterViagens().Where(c => c.Numero == numero).Select(c => new { c.PrevAberturaGate, c.Operador, c.Berco }));
         }
     }
 }

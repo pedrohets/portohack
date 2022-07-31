@@ -11,7 +11,7 @@ namespace AtracacaoApi.Model
         public DateTime? ETA { get; set; }
         public DateTime? ETB { get; set; }
         public DateTime? ETS { get; set; }
-        public DateTime? AberturaGate { get; set; }
+        public DateTime? PrevAberturaGate { get; set; }
         public string Operador { get; set; }
         public string Berco { get; set; }
 
@@ -25,7 +25,7 @@ namespace AtracacaoApi.Model
                     ETB = new DateTime(2022, 08, 01, 21, 00, 00),
                     ETS = new DateTime(2022, 08, 03, 03, 00, 00),
                     Operador = "BTP",
-                    AberturaGate = new DateTime(2022, 08, 05, 03, 00, 00),
+                    PrevAberturaGate = new DateTime(2022, 08, 05, 03, 00, 00),
                     Navio = NavioModel.ObterNavios().Where(c => c.Imo == "9247754").FirstOrDefault(),
                     Berco = "BTP3"
                 },
@@ -36,7 +36,7 @@ namespace AtracacaoApi.Model
                     ETB = new DateTime(2022, 08, 01, 13, 00, 00),
                     ETS = new DateTime(2022, 08, 02, 07, 00, 00),
                     Operador = "Santos Brasil",
-                    AberturaGate = new DateTime(2022, 08, 02, 12, 30, 00),
+                    PrevAberturaGate = new DateTime(2022, 08, 02, 12, 30, 00),
                     Navio = NavioModel.ObterNavios().Where(c => c.Imo == "9622227").FirstOrDefault(),
                     Berco = "TC1"
                 },
@@ -47,7 +47,7 @@ namespace AtracacaoApi.Model
                     ETB = new DateTime(2022, 07, 31, 21, 00, 00),
                     ETS = new DateTime(2022, 08, 01, 13, 00, 00),
                     Operador = "Santos Brasil",
-                    AberturaGate = new DateTime(2022, 08, 01, 21, 00, 00),
+                    PrevAberturaGate = new DateTime(2022, 08, 01, 21, 00, 00),
                     Navio = NavioModel.ObterNavios().Where(c => c.Imo == "9697014").FirstOrDefault(),
                     Berco = "TC2"
                 },
@@ -58,7 +58,7 @@ namespace AtracacaoApi.Model
                     ETB = new DateTime(2022, 08, 01, 00, 00, 00),
                     ETS = new DateTime(2022, 08, 04, 18, 00, 00),
                     Operador = "Santos Brasil",
-                    AberturaGate = new DateTime(2022, 08, 02, 00, 00, 00),
+                    PrevAberturaGate = new DateTime(2022, 08, 02, 00, 00, 00),
                     Navio = NavioModel.ObterNavios().Where(c => c.Imo == "9622241").FirstOrDefault(),
                     Berco = "TC3"
                 },
@@ -69,7 +69,7 @@ namespace AtracacaoApi.Model
                     ETB = new DateTime(2022, 07, 31, 12, 00, 00),
                     ETS = new DateTime(2022, 08, 01, 08, 00, 00),
                     Operador = "BTP",
-                    AberturaGate = new DateTime(2022, 08, 03, 08, 00, 00),
+                    PrevAberturaGate = new DateTime(2022, 08, 03, 08, 00, 00),
                     Navio = NavioModel.ObterNavios().Where(c => c.Imo == "9705005").FirstOrDefault(),
                     Berco = "BTP2"
                 },
@@ -80,7 +80,7 @@ namespace AtracacaoApi.Model
                     ETB = new DateTime(2022, 08, 01, 12, 00, 00),
                     ETS = new DateTime(2022, 08, 02, 16, 00, 00),
                     Operador = "BTP",
-                    AberturaGate = new DateTime(2022, 08, 04, 16, 00, 00),
+                    PrevAberturaGate = new DateTime(2022, 08, 04, 16, 00, 00),
                     Navio = NavioModel.ObterNavios().Where(c => c.Imo == "9230488").FirstOrDefault(),
                     Berco = "BTP1"
                 }
