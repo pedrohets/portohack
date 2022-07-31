@@ -26,6 +26,27 @@ namespace AtracacaoApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Atracação API";
+                    document.Info.Description = "Documentação da API de atracação";
+                    document.Info.TermsOfService = "None";
+                    document.Info.Contact = new NSwag.OpenApiContact
+                    {
+                        Name = "Ocean4Cast",
+                        Email = "Comercial@ocean4cast.com.br",
+                        Url = "https://ocean4cast.com.br"
+                    };
+                    document.Info.License = new NSwag.OpenApiLicense
+                    {
+                        Name = "End User License Agreement (EULA)",
+                        Url = "https://en.wikipedia.org/wiki/End-user_license_agreement"
+                    };
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,6 +57,8 @@ namespace AtracacaoApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
             app.UseHttpsRedirection();
 
             app.UseRouting();
