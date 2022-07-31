@@ -14,10 +14,10 @@ namespace AtracacaoApi.Controllers
     public class ViagemController : ControllerBase
     {
         /// <summary>
-        /// Método para obter os dados dos navios
+        /// Método para obter os dados das viagens
         /// </summary>
-        /// <returns>Navios</returns>
-        [HttpGet("Viagem")]
+        /// <returns>viagens</returns>
+        [HttpGet("Viagens")]
         public IActionResult ObterViagens()
         {
             return Ok(ViagemModel.ObterViagens().Select(c => new { c.Numero, c.Operador, c.Berco, c.Navio }));
@@ -33,6 +33,17 @@ namespace AtracacaoApi.Controllers
         {
             return Ok(ViagemModel.ObterViagens().Where(c => c.Numero == numero).Select(c => new { c }));
             //return Ok(NavioModel.ObterNavios().Where(c => c.Imo == imo).Select(c => new { c }));
+        }
+
+        /// <summary>
+        /// Recuperar dados do ETA
+        /// </summary>
+        /// <param name="numero">numero</param>
+        /// <returns>ETA</returns>
+        [HttpGet("{numero}/ETA")]
+        public IActionResult ObterETB(string numero)
+        {
+            return Ok(ViagemModel.ObterViagens().Where(c => c.Numero == numero).Select(c => new { c.ETA, c.Operador, c.Berco }));
         }
 
         /// <summary>

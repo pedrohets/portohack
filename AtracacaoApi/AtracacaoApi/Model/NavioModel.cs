@@ -35,12 +35,12 @@ namespace AtracacaoApi.Model
             },
                 new NavioModel()
             {
-                Nome = "MSC CHANNE",
-                Imo = "9710438",
+                Nome = "MSC CATERINA",
+                Imo = "9705005",
                 Bandeira = "Portugal [PT]",
                 TipoNavio = "Container Ship",
-                LOA = (decimal) 299.97  ,
-                Calado = (decimal) 10.2
+                LOA = (decimal) 300  ,
+                Calado = (decimal) 12
             },
                 new NavioModel()
             {
