@@ -1,0 +1,229 @@
+import pandas as pd
+import numpy as np
+from scipy import stats
+import datetime
+import math
+from math import sqrt
+from numpy import concatenate
+from matplotlib import pyplot
+from pandas import read_excel
+from pandas import DataFrame
+from pandas import concat
+from sklearn.preprocessing import OneHotEncoder
+import tensorflow as tf
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from datetime import timedelta
+from datetime import datetime, timedelta
+
+class forecast_operacao:
+
+  def __init__(self,dataframe):
+
+    self.df_raiz = dataframe
+
+  def tratamento_antaq(self, terminal, moves, imo_procurado, berco):
+
+    if moves > 0 and moves <= 1000:
+
+      classe_ope = 0
+
+    elif moves > 1000 and moves <= 2000:
+
+      classe_ope = 1
+
+    elif moves > 2000 and moves <= 3000:
+
+      classe_ope = 2
+
+    elif moves > 3000 and moves <= 4000:
+
+      classe_ope = 3
+
+    elif moves > 4000 and moves <= 5000:
+
+      classe_ope = 4
+
+    elif moves > 5000 and moves <= 6000:
+
+      classe_ope = 5
+
+    df = self.df_raiz
+
+    df = df.rename(columns={'Total de Movimentação Contêineres (Bruto)\n(u)':'moves'})
+
+    df['Data da Atracação'] = pd.to_datetime(df['Data da Atracação'], format="%d/%m/%Y %H:%M:%S")
+
+    df['Data da Desatracação'] = pd.to_datetime(df['Data da Desatracação'], format="%d/%m/%Y %H:%M:%S")
+
+    df.loc[(df['moves'] > 0) & (df['moves'] <= 1000), 'classe_ope'] = 0
+    df.loc[(df['moves'] > 1000) & (df['moves'] <= 2000), 'classe_ope'] = 1
+    df.loc[(df['moves'] > 2000) & (df['moves'] <= 3000), 'classe_ope'] = 2
+    df.loc[(df['moves'] > 3000) & (df['moves'] <= 4000), 'classe_ope'] = 3
+    df.loc[(df['moves'] > 4000) & (df['moves'] <= 5000), 'classe_ope'] = 4
+    df.loc[(df['moves'] > 5000) & (df['moves'] <= 6000), 'classe_ope'] = 5
+
+    df['Terminal'] = df['Terminal'].replace({
+        'Santos (Santos Brasil)': 'SB',
+        'Dp World Santos (Dp World Santos)':'DPW',
+        'Santos (Btp)':'BTP',
+        'Santos (Ecoporto Santos S/A)':'ECOPORTO',
+        'Santos (Union Armazenagem E Operações Portuárias S/A (Tev))':'TEV',
+        'Santos (Libra Terminais S/A)':'LIBRA',
+        'Cais Público - Macuco': 'CAIS PUBLICO MACUCO',
+        'Santos (Cais Público - Saboó)': 'CAIS PUBLICO SABOO'
+    })
+
+    df = df[df['Terminal'] == terminal]
+
+    df = df[df['classe_ope'] == classe_ope]
+
+    df = df[df['IMO da embarcação'] == imo_procurado]
+
+    df['horas_berco'] = df['Data da Desatracação'] - df['Data da Atracação']
+
+    df = df.drop(columns=['IMO da embarcação', 'Número de capitania', 'Data do Início da Operação','Data da Desatracação' , 'Data da Chegada', 'Data da Atracação', 'Data do Início da Operação', 'Data do Término da Operação', 'Data da Desatracação', 'Número atracação', 'Mês'])
+
+    dict_forecast={
+    "moves":moves,
+    "Berço": berco,
+    }
+
+    df_for = pd.DataFrame(dict_forecast, index = range(len(dict_forecast)-1))
+
+    df = pd.concat([df,df_for])
+
+    self.df2 = df
+
+    ohe = OneHotEncoder(sparse=False)
+
+    d_values = df[['Berço']].values
+
+    d_df = ohe.fit_transform(d_values)
+
+    d_shape = d_df.shape[1]
+
+    d_df = pd.DataFrame(d_df)
+
+    for i in range(d_shape):
+
+      d_df = d_df.rename(columns={i:f'Berço {i}'})
+
+    df = df.reset_index(drop=True)
+
+    df = pd.concat([df, d_df], axis=1)
+
+    df = df.drop(columns=['Berço', 'Terminal', 'classe_ope'])
+
+    df_for = df.iloc[[df.shape[0]-1]]
+
+    df = df.drop(index=df.shape[0]-1)
+
+    # df_predict = df[df.shape[0]-1:]
+
+    # df_predict = df_predict.reset_index(drop=True)
+
+    # df = df.drop(index=df.shape[0]-1)
+
+    df_y = df[['horas_berco']]
+
+    df_x = df.drop(columns=['horas_berco'])
+
+    df_for = df_for.drop(columns='horas_berco')
+
+    scaler_x = MinMaxScaler()
+
+    scaler_y = MinMaxScaler()
+
+    y_values = df_y.values
+
+    df_for_values = df_for.values
+
+    x_values = df_x.values
+
+    y_scaled = scaler_y.fit_transform(y_values)
+
+    x_scaled = scaler_x.fit_transform(x_values)
+
+    df_for_scaled = scaler_x.transform(df_for_values)
+
+    self.df_for = df_for_scaled
+
+    self.x_scaled = x_scaled
+
+    self.y_scaled = y_scaled
+
+    self.scaler_x = scaler_x
+
+    self.scaler_y = scaler_y
+
+    self.df_forecast = df
+
+  
+  
+  def forecast_rf(self):
+
+    x_scaled = self.x_scaled
+
+    y_scaled = self.y_scaled
+
+    df_for = self.df_for
+
+    scaler_x = self.scaler_x
+
+    scaler_y = self.scaler_y
+
+    df = self.df_forecast
+
+    rf = RandomForestRegressor(n_estimators=1000, bootstrap=True,random_state=10, oob_score=True)
+
+    rf.fit(x_scaled, y_scaled)
+
+    pred_y = rf.predict(x_scaled)
+
+    pred_y = pred_y.reshape(pred_y.shape[0], 1)
+
+    pred_y = scaler_y.inverse_transform(pred_y)
+
+    pred_y = pd.DataFrame(pred_y)
+
+    pred_y = pred_y.rename(columns={0:'rf_predict'})
+
+    pred_y['rf_predict'] = pd.to_timedelta(pred_y['rf_predict'])
+
+    df = pd.concat([df, pred_y], axis=1)
+
+    self.model = rf
+
+    self.df_forecast = df
+
+dict_navios = {
+    'Cap San Lorenzo':['SB',9622227,'Tecon 3 (SSZ0812)', 2900, 12.1],
+    'Cap San Antonio':['SB',9622241,'Tecon 2 (SSZ0813)', 2600, 11.1],
+    'MSC DARDANELLES':['BTP', 9247754,'Btp I (SSZ0107)',1261, 11.8],
+    'MSC Caterina':['BTP', 9705005, 'Btp Iii (SSZ0109)', 1500, 12],
+    'MSC Michela':['BTP', 9720512, 'Btp Iii (SSZ0109)', 1465, 12.9],
+    'MSC Channe':['BTP', 9710438,'Btp Ii (SSZ0108)' ,1602,10.2],
+    'Maersk Bermuda':['SB', 9697014 ,'Tecon 2 (SSZ0813)' ,1166, 8.8]
+}
+
+df = read_excel('C:/Users/PHTS/Desktop/base_antaq.xlsx')
+
+for i in dict_navios:
+
+    forecast = forecast_operacao(df)
+
+    forecast.tratamento_antaq(terminal=dict_navios.get(i)[0], moves=dict_navios.get(i)[3], imo_procurado=dict_navios.get(i)[1], berco=dict_navios.get(i)[2])
+
+    forecast.forecast_rf()
+
+    df_forecast = forecast.df_forecast
+
+    model = forecast.model
+
+    predict = model.predict(forecast.df_for)
+
+    predict = timedelta(predict[0])
+
+    print(f'{dict_navios.get(i)[0]} - predict {predict}')
