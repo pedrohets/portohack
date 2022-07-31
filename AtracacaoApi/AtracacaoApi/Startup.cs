@@ -36,9 +36,9 @@ namespace AtracacaoApi
                     document.Info.TermsOfService = "None";
                     document.Info.Contact = new NSwag.OpenApiContact
                     {
-                        Name = "Ocean4Cast",
+                        Name = "Preview - Ocean4Cast",
                         Email = "Comercial@ocean4cast.com.br",
-                        Url = "https://ocean4cast.com.br"
+                        Url = "https://www.figma.com/file/0DS3TUpm1BqK8EwtScpcov/Porto-Hack-Santos"
                     };
                     document.Info.License = new NSwag.OpenApiLicense
                     {
